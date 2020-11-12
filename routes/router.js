@@ -6,9 +6,9 @@ const {
 } = require('../controllers/users');
 const getCards = require('../controllers/cards');
 
-router.use('/users/:_id', getUser);
-router.use('/users', getUsers);
-router.use('/cards', getCards);
-router.use('*', error);
+router.get('/users/:_id', getUser);
+router.get('/users', getUsers);
+router.get('/cards', getCards);
+router.all('*', error);
 
 module.exports = router;
