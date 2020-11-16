@@ -4,7 +4,8 @@
   "private": true,
   "homepage": "http://.",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.10.14"
   },
   "scripts": {
     "start": "node app.js",

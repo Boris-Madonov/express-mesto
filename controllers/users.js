@@ -1,33 +1,50 @@
-const path = require('path');
-const readFile = require('../utils/read-file');
+const User = require('../models/user');
 
-const filePath = path.join(__dirname, '..', 'data', 'users.json');
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
 
-const getUsers = (req, res) => {
-  readFile(filePath)
-    .then((usersData) => res.send(usersData))
-    .catch((err) => {
-      console.log(err);
-      res.status(505).send({ message: 'Ошибка на сервере' });
-    });
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'На сервере произошла ошибка' });
+  }
 };
 
-const getUser = (req, res) => {
-  readFile(filePath)
-    .then((usersData) => usersData.find((user) => user._id === req.params._id))
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
-      }
-      return res.send(user);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(505).send({ message: 'Ошибка на сервере' });
-    });
+// eslint-disable-next-line consistent-return
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
+      return res.status(404).send({ message: 'Нет пользователя с таким id' });
+    }
+
+    res.send(user);
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).send({ message: 'Передан некорректный id' });
+    }
+    res.status(500).send({ message: 'На сервере произошла ошибка' });
+  }
+};
+
+// eslint-disable-next-line consistent-return
+const createUser = async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+
+    res.send(user);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(404).send({ message: 'Переданы некорректные данные' });
+    }
+    res.status(500).send({ message: 'На сервере произошла ошибка' });
+  }
 };
 
 module.exports = {
   getUsers,
   getUser,
+  createUser,
 };
