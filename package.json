@@ -2,7 +2,7 @@
   "name": "express-mesto",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://.",
+  "homepage": "https://github.com/Boris-Madonov/express-mesto.git",
   "dependencies": {
     "express": "^4.17.1",
     "mongoose": "^5.10.14"
@@ -25,7 +25,6 @@
   },
   "devDependencies": {
     "eslint": "^7.13.0",
-    "gh-pages": "^3.1.0",
     "nodemon": "^2.0.6",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"

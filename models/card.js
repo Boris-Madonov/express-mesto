@@ -10,6 +10,12 @@ const cardSchema = new Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(v) {
+        return /^https?:\/\/(www\.)?[\w-.~:/?#[\]@!$&'()*+,;=]+#?$/gi.test(v);
+      },
+      message: 'Ошибка в ссылке',
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -18,16 +24,10 @@ const cardSchema = new Schema({
   likes: [{
     type: Schema.Types.ObjectId,
     default: [],
-    validate: {
-      validator(v) {
-        return /^https?:\/\/(www\.)?[\w-.~:/?#[\]@!$&'()*+,;=]+#?$/gi.test(v);
-      },
-      message: 'Ошибка в ссылке',
-    },
   }],
   createdAt: {
     type: Date,
-    default: new Date(),
+    default: Date.now(),
   },
 });
 

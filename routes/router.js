@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const error = require('../controllers/error');
+const notFoundHandler = require('../controllers/notFoundHandler');
 const {
   getUsers,
   getUser,
@@ -17,6 +17,6 @@ router.get('/cards', getCards);
 router.post('/users', createUser);
 router.post('/cards', createCard);
 router.delete('/cards/:cardId', deleteCard);
-router.all('*', error);
+router.all('*', notFoundHandler);
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const error = (req, res) => {
+const notFoundHandler = (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 };
 
-module.exports = error;
+module.exports = notFoundHandler;

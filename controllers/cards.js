@@ -26,7 +26,7 @@ const createCard = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.name === 'ValidationError') {
-      return res.status(404).send({ message: 'Переданы некорректные данные' });
+      return res.status(400).send({ message: error.message });
     }
     res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
@@ -35,12 +35,16 @@ const createCard = async (req, res) => {
 // eslint-disable-next-line consistent-return
 const deleteCard = async (req, res) => {
   try {
-    const card = await Card.findByIdAndDelete(req.params.cardId);
+    const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      return res.status(400).send({ message: 'Нет карточки с таким id' });
+    }
+    card.deleteOne();
 
     res.send(card);
   } catch (error) {
     if (error.name === 'CastError') {
-      return res.status(404).send({ message: 'Передан некорректный id' });
+      return res.status(400).send({ message: 'Передан некорректный id' });
     }
     res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
