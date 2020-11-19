@@ -11,25 +11,23 @@ const getUsers = async (req, res) => {
   }
 };
 
-// eslint-disable-next-line consistent-return
 const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
 
     if (!user) {
-      return res.status(400).send({ message: 'Нет пользователя с таким id' });
+      return res.status(404).send({ message: 'Нет пользователя с таким id' });
     }
 
-    res.send(user);
+    return res.send(user);
   } catch (error) {
     if (error.name === 'CastError') {
       return res.status(400).send({ message: 'Передан некорректный id' });
     }
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
-// eslint-disable-next-line consistent-return
 const createUser = async (req, res) => {
   try {
     const user = await User.create({
@@ -38,12 +36,12 @@ const createUser = async (req, res) => {
       avatar: req.body.avatar,
     });
 
-    res.send(user);
+    return res.send(user);
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).send({ message: error.message });
     }
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return res.status(500).send({ message: 'На сервере произошла ошибка' });
   }
 };
 
