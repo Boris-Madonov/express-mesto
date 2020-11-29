@@ -1,52 +1,79 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const { badRequestError, unauthorizedError, notFoundError } = require('../errors/errors');
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
 
-    res.send(users);
+    return res.send(users);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
 };
 
-const getUser = async (req, res) => {
+const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
 
     if (!user) {
-      return res.status(404).send({ message: 'Нет пользователя с таким id' });
+      throw notFoundError('Нет пользователя с таким id');
     }
 
     return res.send(user);
   } catch (error) {
+    console.log(error);
     if (error.name === 'CastError') {
-      return res.status(400).send({ message: 'Передан некорректный id' });
+      return badRequestError('Передан некорректный id');
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
-    const user = await User.create({
-      name: req.body.name,
-      about: req.body.about,
-      avatar: req.body.avatar,
-    });
+    const user = await bcrypt.hash(req.body.password, 10)
+      .then((hash) => {
+        User.create({
+          name: req.body.name,
+          about: req.body.about,
+          avatar: req.body.avatar,
+          email: req.body.email,
+          password: hash,
+        });
+      });
 
     return res.send(user);
   } catch (error) {
+    console.log(error);
     if (error.name === 'ValidationError') {
-      return res.status(400).send({ message: error.message });
+      return badRequestError(error.message);
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+
+      res.send({ token });
+    })
+    .catch((error) => {
+      console.log(error);
+      return next(unauthorizedError(error.message));
+    });
 };
 
 module.exports = {
   getUsers,
-  getUser,
+  getCurrentUser,
   createUser,
+  login,
 };

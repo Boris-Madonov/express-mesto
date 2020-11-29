@@ -1,17 +1,18 @@
 const Card = require('../models/card');
+const { badRequestError, notFoundError } = require('../errors/errors');
 
-const getCards = async (req, res) => {
+const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
 
-    res.send(cards);
+    return res.send(cards);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
 };
 
-const createCard = async (req, res) => {
+const createCard = async (req, res, next) => {
   try {
     const card = await Card.create({
       name: req.body.name,
@@ -25,26 +26,29 @@ const createCard = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.name === 'ValidationError') {
-      return res.status(400).send({ message: error.message });
+      return badRequestError(error.message);
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
 };
 
-const deleteCard = async (req, res) => {
+const deleteCard = async (req, res, next) => {
   try {
     const card = await Card.findById(req.params.cardId);
     if (!card) {
-      return res.status(404).send({ message: 'Нет карточки с таким id' });
+      throw notFoundError('Нет карточки с таким id');
+    } if (card.owner !== req.user._id) {
+      throw notFoundError('Нет прав на удаление карточки');
     }
     card.deleteOne();
 
     return res.send(card);
   } catch (error) {
+    console.log(error);
     if (error.name === 'CastError') {
-      return res.status(400).send({ message: 'Передан некорректный id' });
+      return badRequestError('Передан некорректный id');
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    return next(error);
   }
 };
 

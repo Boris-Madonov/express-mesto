@@ -1,5 +1,7 @@
-const notFoundHandler = (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+const { notFoundError } = require('../errors/errors');
+
+const notFoundHandler = (req, res, next) => {
+  next(notFoundError('Запрашиваемый ресурс не найден'));
 };
 
 module.exports = notFoundHandler;

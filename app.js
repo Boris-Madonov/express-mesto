@@ -1,6 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const router = require('./routes/router'); // использую один файл со всеми роутерами
+const { errors } = require('celebrate');
+const router = require('./routes/router');
+const error = require('./middlewares/error');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -15,15 +19,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5fb2d3ea957b81a6c976f0dc',
-  };
-
-  next();
-});
-
+app.use(requestLogger);
 app.use('/', router);
+app.use(errorLogger);
+app.use(errors());
+app.use(error);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

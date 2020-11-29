@@ -4,8 +4,15 @@
   "private": true,
   "homepage": "https://github.com/Boris-Madonov/express-mesto.git",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^13.0.4",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.14"
+    "express-winston": "^4.0.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.14",
+    "validator": "^13.1.17",
+    "winston": "^3.3.3"
   },
   "scripts": {
     "start": "node app.js",
