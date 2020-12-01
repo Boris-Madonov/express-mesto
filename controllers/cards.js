@@ -14,12 +14,13 @@ const getCards = async (req, res, next) => {
 
 const createCard = async (req, res, next) => {
   try {
+    console.log(req.body);
+    console.log(req.name);
+    console.log(req.link);
     const card = await Card.create({
       name: req.body.name,
       link: req.body.link,
       owner: req.user._id,
-      likes: req.body.likes,
-      createdAt: req.body.createdAt,
     });
 
     return res.send(card);

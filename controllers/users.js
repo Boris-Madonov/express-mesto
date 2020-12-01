@@ -17,7 +17,7 @@ const getUsers = async (req, res, next) => {
 
 const getCurrentUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(req.user);
 
     if (!user) {
       throw notFoundError('Нет пользователя с таким id');
@@ -38,9 +38,6 @@ const createUser = async (req, res, next) => {
     const user = await bcrypt.hash(req.body.password, 10)
       .then((hash) => {
         User.create({
-          name: req.body.name,
-          about: req.body.about,
-          avatar: req.body.avatar,
           email: req.body.email,
           password: hash,
         });

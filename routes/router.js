@@ -16,9 +16,33 @@ const {
 
 router.post('/signup', celebrate({
   body: Joi.object().keys({
-    /* name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string(), */
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(4),
+  }),
+}), createUser);
+
+router.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(4),
+  }),
+}), login);
+
+router.use(auth);
+router.get('/users/me', getCurrentUser);
+router.post('/cards', createCard);
+router.get('/users', getUsers);
+router.get('/cards', getCards);
+router.delete('/cards/:cardId', deleteCard);
+router.all('*', notFoundHandler);
+
+module.exports = router;
+
+/* router.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().max(30),
+    about: Joi.string().max(30),
+    avatar: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(4),
   }).unknown(true),
@@ -57,6 +81,4 @@ router.delete('/cards/:cardId', celebrate({
   }).unknown(true),
 }), deleteCard);
 
-router.all('*', notFoundHandler);
-
-module.exports = router;
+router.all('*', notFoundHandler); */

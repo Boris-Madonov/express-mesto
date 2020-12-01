@@ -1,19 +1,18 @@
 const { Schema, model } = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const isURL = require('validator/lib/isURL');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
   name: {
     type: String,
     required: false,
-    minlength: 2,
     maxlength: 30,
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     required: false,
-    minlength: 2,
     maxlength: 30,
     default: 'Исследователь',
   },
@@ -22,7 +21,7 @@ const userSchema = new Schema({
     required: false,
     validate: {
       validator(v) {
-        return /^https?:\/\/(www\.)?[\w-.~:/?#[\]@!$&'()*+,;=]+#?$/gi.test(v);
+        isURL(v);
       },
       message: 'Ошибка в ссылке',
     },
@@ -36,6 +35,7 @@ const userSchema = new Schema({
       validator(v) {
         isEmail(v);
       },
+      message: 'Ошибка в адресе почты',
     },
   },
   password: {
