@@ -5,6 +5,8 @@ const notFoundHandler = require('../controllers/notFoundHandler');
 const {
   getUsers,
   getCurrentUser,
+  setUserInfo,
+  setUserAvatar,
   createUser,
   login,
 } = require('../controllers/users');
@@ -12,6 +14,8 @@ const {
   getCards,
   createCard,
   deleteCard,
+  likeCard,
+  dislikeCard,
 } = require('../controllers/cards');
 
 router.post('/signup', celebrate({
@@ -30,55 +34,28 @@ router.post('/signin', celebrate({
 
 router.use(auth);
 router.get('/users/me', getCurrentUser);
-router.post('/cards', createCard);
-router.get('/users', getUsers);
-router.get('/cards', getCards);
-router.delete('/cards/:cardId', deleteCard);
-router.all('*', notFoundHandler);
-
-module.exports = router;
-
-/* router.post('/signup', celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().max(30),
     about: Joi.string().max(30),
-    avatar: Joi.string(),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(4),
-  }).unknown(true),
-}), createUser);
-
-router.post('/signin', celebrate({
+  }),
+}), setUserInfo);
+router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(4),
-  }).unknown(true),
-}), login);
-
-router.use(auth);
-
-router.get('/users', getUsers);
-router.get('/cards', getCards);
-
-router.get('/users/me', celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().alphanum(),
-  }).unknown(true),
-}), getCurrentUser);
-
+    avatar: Joi.string(),
+  }),
+}), setUserAvatar);
 router.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
-    likes: Joi.object(),
-    createdAt: Joi.date(),
-  }).unknown(true),
+    name: Joi.string().min(2).max(30),
+    link: Joi.string().max(30),
+  }),
 }), createCard);
+router.get('/users', getUsers);
+router.get('/cards', getCards);
+router.delete('/cards/:cardId', deleteCard);
+router.put('/cards/likes/:cardId', likeCard);
+router.delete('/cards/likes/:cardId', dislikeCard);
+router.all('*', notFoundHandler);
 
-router.delete('/cards/:cardId', celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().alphanum(),
-  }).unknown(true),
-}), deleteCard);
-
-router.all('*', notFoundHandler); */
+module.exports = router;
