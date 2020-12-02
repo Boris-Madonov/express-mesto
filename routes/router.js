@@ -18,6 +18,12 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 router.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -48,7 +54,7 @@ router.patch('/users/me/avatar', celebrate({
 router.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
-    link: Joi.string().max(30),
+    link: Joi.string(),
   }),
 }), createCard);
 router.get('/users', getUsers);
