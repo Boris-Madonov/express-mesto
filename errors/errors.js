@@ -13,8 +13,14 @@ const notFoundError = (text) => ({
   statusCode: 404,
 });
 
+const conflictError = (text) => ({
+  message: text,
+  statusCode: 409,
+});
+
 module.exports = {
   badRequestError,
   unauthorizedError,
   notFoundError,
+  conflictError,
 };
